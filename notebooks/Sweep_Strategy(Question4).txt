@@ -1,0 +1,17 @@
+For this hyperparameter search, the following parameters were tuned:
+- Epochs: 10, 15, 20 → 3 options  
+- Batch size: 32, 64 → 2 options  
+- Learning rate: 0.01, 0.005, 0.001 → 3 options  
+- Optimizer: sgd, momentum, nesterov, rmsprop, adam, nadam → 6 options  
+- Hidden layers: [64], [128], [128, 64], [256, 128] → 4 options  
+Total combinations (if exhaustive) = 3 × 2 × 3 × 6 × 4 = 432  
+Because trying all 432 combinations would take considerable time, the sweep uses the Bayesian optimization method (`method="bayes"`):
+- Bayesian Sweep intelligently explores the hyperparameter space.  
+- It uses information from previous runs to select promising hyperparameter combinations in future runs.  
+- This is more efficient than random or grid search because it focuses on regions likely to improve test accuracy.  
+Additional Sweep Details from Code:
+- Metric optimized: `test_accuracy` (goal: maximize)  
+- Number of runs: 20 (controlled by `count=20` in `wandb.agent`)  
+- Each run logs the final test accuracy for the chosen hyperparameter configuration.  
+Reasoning:  
+Using Bayesian optimization allows the model to efficiently explore the most promising hyperparameter settings among 432 possibilities while keeping computation time reasonable. This strategy balances exploration (trying different types of configurations) and exploitation (focusing on combinations that give better performance).
