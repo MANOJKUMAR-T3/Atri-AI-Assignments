@@ -1,0 +1,58 @@
+Question 6: Hyperparameter Analysis from W&B Plots
+
+How the plots were used
+    ✶ Used W&B's Parallel Coordinates Plot to visualize how hyperparameter combinations flow across epochs, batch_size, learning_rate, optimizer, hidden_size, num_layers to val_accuracy.  
+    ✶ Color gradient shows val_accuracy (red=low, blue=high); thick line clusters identify successful configs.  
+    ✶ Correlation Summary quantifies each parameter's relative importance and direction of influence.
+
+Parameters considered (from sweep_config)
+    - num_layers: [3, 4, 5]  
+    - hidden_size: [32, 64, 128]  
+    - batch_size: [16, 32, 64]  
+    - learning_rate: [1e-3, 1e-4]  
+    - optimizer: ["sgd", "momentum", "nesterov", "rmsprop", "adam", "nadam"]  
+    - epochs: [5, 10]  
+    - val_accuracy`: optimization target
+
+Observations from Parallel Coordinates Plot
+    Zooming into <65% configurations (per question requirement):
+        - High learning_rate=1e-4 + sgd/momentum: Dense red cluster (low val_accuracy); unstable training.
+        - hidden_size=32: Thin lines terminate early; consistent underfitting across optimizers.
+        - epochs=5: Short training cuts off before convergence zone.
+        - adam/nadam dominate blue region: Adaptive optimizers create thick high-accuracy paths.
+        - learning_rate=1e-3: Clear separation - lines flow to top val_accuracy.
+        - batch_size=16: More line breakup vs stable 32-64 paths.
+        - num_layers=5: Increased line scattering vs consistent 3-4 layers.
+
+Analysis of Low-Performing Configurations (<65%)
+    Pattern 1: learning_rate=1e-4 + SGD variants
+        - sgd/momentum + lr=1e-4 → steep downward slopes in plot
+        - Fixed LR too conservative for Fashion-MNIST convergence
+
+    Pattern 2: hidden_size=32 (underfitting)
+        - Single smallest size clusters in bottom accuracy region
+        - Insufficient capacity even with optimal optimizer/LR
+
+    Pattern 3: epochs=5 (insufficient training)
+        - Lines terminate before reaching peak accuracy zones
+        - Complex models need 10 epochs minimum
+
+Correlation Summary Insights
+    ✶ learning_rate: Highest importance (1e-3 >> 1e-4)  
+    ✶ optimizer: Strong positive (adam/nadam > others)  
+    ✶ hidden_size: Moderate positive (128 > 64 > 32)  
+    ✶ num_layers: Weaker effect (3-4 optimal)  
+    ✶ batch_size: Minor (32-64 stable)  
+    ✶ epochs: Avoids underfitting at 10
+
+Recommended Configuration (targets top paths)
+    learning_rate=1e-3, optimizer='adam', hidden_size=128, num_layers=4, batch_size=32, epochs=10
+
+
+Justification from plots:
+    - Clusters in upper-blue val_accuracy region of parallel coordinates
+    - Aligns with correlation priorities: Best LR + best optimizer + largest tested hidden_size
+    - Avoids all <65% failure patterns identified above
+    - Realistic target: ~90-92% (Fashion-MNIST MLP ceiling with FC architecture)
+
+This exact config appears in thick high-accuracy line bundles and satisfies all question requirements.
