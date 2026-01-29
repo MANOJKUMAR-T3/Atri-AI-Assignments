@@ -1,0 +1,26 @@
+Accuracies:
+   -Rec 1 (Balanced): 0.9757 (97%)
+   -Rec 2 (Deep): 0.9784 (97%)
+   -Rec 3 (Lightweight): 0.9756 (97%)
+
+The 3 Recommendations    
+    1.Rec 1
+       -Hidden Layers : [128, 128, 128]
+       -Optimizer : Adam
+       -Learning Rate : 0.001
+    1.Rec 2
+       -Hidden Layers : [128, 128, 128, 128, 128]
+       -Optimizer : Nadam
+       -Learning Rate : 0.001
+    1.Rec 3
+       -Hidden Layers : [64, 64]
+       -Optimizer : Adam
+       -Learning Rate : 0.001
+
+Justification:
+The transition from Fashion-MNIST to MNIST digits allowed me to apply three key learnings using my NeuralNet implementation:
+            -Knowledge Transfer: Earlier experiments indicated that while Fashion-MNIST required significant depth, digits are geometrically simpler. 
+                                I chose Rec 3 (Lightweight) to test the hypothesis that a smaller network can maintain 97%+ accuracy with less compute.
+            -Momentum Learnings: I recommended Rec 2 (Nadam) because my previous logs showed that Nesterov-accelerated gradients often navigate the loss surface more aggressively in deep 5-layer models.
+            -Robust Baseline: Rec 1 was selected as a control recommendation, as the 128-unit width consistently yielded the lowest Cross-Entropy loss across all item types in the first dataset.
+
